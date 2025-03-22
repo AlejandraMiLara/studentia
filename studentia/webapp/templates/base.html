@@ -7,11 +7,19 @@
 </head>
 <body>
 
+    {% if user.is_authenticated %}
+    <ul>
+        <li><a href="/">Inicio</a></li>
+        <li><a href="/logout">Cerrar Sesión</a></li>
+    </ul>
+    {% else %}
     <ul>
         <li><a href="/">Inicio</a></li>
         <li><a href="/login">Iniciar Sesion</a></li>
         <li><a href="/signup">Registrarse</a></li>
     </ul>
+    {% endif %}
+
     
     {% block content %}
     {% endblock %}

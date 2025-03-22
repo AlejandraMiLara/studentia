@@ -1,4 +1,8 @@
 {% extends 'base.html' %}
 {% block content %}
-    <p>Aqui va el registro de usuario form</p>
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Registrarse</button>
+</form>
 {% endblock %}
