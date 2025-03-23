@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from .models import UsuarioPersonalizado
+from .models import UsuarioPersonalizado, ConfiguracionUsuario
 
 class RegistroUsuarioForm(UserCreationForm):
     email = forms.EmailField(required=True)
@@ -16,4 +16,13 @@ class EditarPerfilForm(forms.ModelForm):
 
         widgets = {
             'sobre_mi': forms.Textarea(attrs={'rows':4}),
+        }
+
+class ConfsPerfilForm(forms.ModelForm):
+    class Meta:
+        model = ConfiguracionUsuario
+        fields = ['recibir_notificaciones', 'recibir_ofertas']
+        widgets = {
+            'recibir_notificaciones': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'recibir_ofertas': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }

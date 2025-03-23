@@ -11,6 +11,7 @@ urlpatterns = [
     path('logout/', views.salir, name='salir'),
     path('profile/', views.ver_perfil, name='ver_perfil'),
     path('profile/edit', views.editar_perfil, name='editar_perfil'),
+    path('profile/settings', views.confs_perfil, name='confs_perfil'),
     
 ]
 
