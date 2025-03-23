@@ -1,6 +1,11 @@
 {% extends 'base.html' %}
 {% block content %}
 <h2>Iniciar sesión</h2>
+
+{% load socialaccount %}
+<a href="{% provider_login_url 'google' %}?next=/">Ingresar con Google</a>
+<br><br><br>
+
 <form method="POST">
     {% csrf_token %}
     <label for="username">Usuario:</label>

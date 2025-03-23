@@ -1,16 +1,15 @@
 
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from webapp import views
 from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', views.inicio, name='inicio'),
-    path('login/', views.iniciar_sesion, name="iniciar_sesion"),
-    path('signup/', views.registrar_usuario, name="registrar_usuario"),
-    path('logout/', views.salir, name='salir'),
+    path('accounts/', include('allauth.urls')),
+    path('', include('webapp.urls')),
+
 ]
 
 if settings.DEBUG:
