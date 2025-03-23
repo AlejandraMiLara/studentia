@@ -1,8 +1,9 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 import datetime
-from .forms import RegistroUsuarioForm
+from .forms import RegistroUsuarioForm, EditarPerfilForm
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
 # Create your views here.
@@ -36,3 +37,19 @@ def registrar_usuario(request):
     else:
         form = RegistroUsuarioForm()
     return render(request, 'registrar_usuario.html', {'form': form})
+
+@login_required
+def ver_perfil(request):
+    return render(request, 'perfil.html', {'usuario':request.user})
+
+@login_required
+def editar_perfil(request):
+    if request.method == 'POST':
+        form = EditarPerfilForm(request.POST, request.FILES, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect('ver_perfil')
+    else:
+        form = EditarPerfilForm(instance=request.user)
+
+    return render(request, 'editar_perfil.html', {'form': form})
