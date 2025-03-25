@@ -1,11 +1,13 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 import datetime
-from .forms import RegistroUsuarioForm, EditarPerfilForm, ConfsPerfilForm
-from .models import ConfiguracionUsuario
+from .forms import RegistroUsuarioForm, EditarPerfilForm, ConfsPerfilForm, CursoForm, InscripcionCursoForm
+from .models import ConfiguracionUsuario, Curso, AlumnoCurso
 from django.contrib.auth import authenticate, login, logout, get_backends
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+import random
+import string
 
 # Create your views here.
 
@@ -34,11 +36,11 @@ def registrar_usuario(request):
         if form.is_valid():
             user = form.save()
 
-            # Asignar backend explícitamente
-            backend = get_backends()[0]  # Primer backend de la lista
+
+            backend = get_backends()[0] 
             user.backend = f"{backend.__module__}.{backend.__class__.__name__}"
 
-            login(request, user)  # Loguea automáticamente después de registrarse
+            login(request, user) 
 
             return redirect('inicio')
     else:
@@ -76,3 +78,82 @@ def confs_perfil(request):
         form = ConfsPerfilForm(instance=configuracion)
 
     return render(request, 'confs_perfil.html', {'form': form})
+
+def generar_codigo():
+    while True:
+        codigo = ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
+        if not Curso.objects.filter(codigo_acceso=codigo).exists():
+            return codigo
+
+@login_required
+def crear_curso(request):
+    if request.user.rol != 'Profesor': 
+        messages.error(request, "No tienes permiso para crear cursos.")
+        return redirect('dashboard')
+
+    if request.method == 'POST':
+        form = CursoForm(request.POST)
+        if form.is_valid():
+            curso = form.save(commit=False)
+            curso.id_profesor = request.user 
+            curso.codigo_acceso = generar_codigo()
+            curso.save()
+            messages.success(request, "Curso creado con éxito.")
+            return redirect('dashboard')
+
+    else:
+        form = CursoForm()
+
+    return render(request, 'crear_curso.html', {'form': form})
+
+@login_required
+def inscribirse_curso(request):
+    if request.method == "POST":
+        form = InscripcionCursoForm(request.POST)
+        if form.is_valid():
+            codigo_acceso = form.cleaned_data["codigo_acceso"]
+
+            # Buscar el curso con el código ingresado
+            curso = Curso.objects.filter(codigo_acceso=codigo_acceso).first()
+
+            if not curso:
+                messages.error(request, "El curso no existe.")
+                return redirect("inscribirse_curso")
+
+            # Verificar si el usuario es el profesor del curso
+            if curso.id_profesor == request.user:
+                messages.error(request, "No puedes inscribirte en tu propio curso.")
+                return redirect("inscribirse_curso")
+
+            # Verificar si el usuario ya está inscrito
+            if AlumnoCurso.objects.filter(curso=curso, alumno=request.user).exists():
+                messages.error(request, "Ya estás inscrito en este curso.")
+            else:
+                # Inscribir al usuario en el curso
+                AlumnoCurso.objects.create(curso=curso, alumno=request.user)
+                messages.success(request, f"Te has inscrito en {curso.nombre_curso} correctamente.")
+
+            return redirect("dashboard")
+
+    else:
+        form = InscripcionCursoForm()
+
+    return render(request, "inscribirse_curso.html", {"form": form})
+
+
+@login_required
+def dashboard(request):
+    usuario = request.user
+    es_profesor = usuario.rol == "Profesor"
+    if es_profesor:
+        cursos_creados = Curso.objects.filter(id_profesor=usuario) 
+    else:
+        cursos_creados = None
+
+    cursos_inscritos = AlumnoCurso.objects.filter(alumno=usuario) 
+
+    return render(request, "dashboard.html", {
+        "es_profesor": es_profesor,
+        "cursos_creados": cursos_creados,
+        "cursos_inscritos": cursos_inscritos
+    })

@@ -12,6 +12,9 @@ urlpatterns = [
     path('profile/', views.ver_perfil, name='ver_perfil'),
     path('profile/edit', views.editar_perfil, name='editar_perfil'),
     path('profile/settings', views.confs_perfil, name='confs_perfil'),
+    path('dashboard/', views.dashboard, name='dashboard'),
+    path('new/course', views.crear_curso, name='crear_curso'),
+    path("course/join", views.inscribirse_curso, name="inscribirse_curso"),
     
 ]
 

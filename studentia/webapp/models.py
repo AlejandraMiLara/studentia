@@ -2,6 +2,8 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.conf import settings
+import random
+import string
 
 # Create your models here.
 
@@ -26,7 +28,12 @@ class ConfiguracionUsuario(models.Model):
 
     def __str__(self):
         return f"Configuración de {self.usuario.username}"
-    
+
+def generar_codigo():
+    longitud = 6  
+    caracteres = string.ascii_uppercase + string.digits
+    return ''.join(random.choices(caracteres, k=longitud))
+
 class Curso(models.Model):
     id_profesor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     nombre_curso = models.CharField(max_length=100)

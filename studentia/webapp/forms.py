@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from .models import UsuarioPersonalizado, ConfiguracionUsuario
+from .models import UsuarioPersonalizado, ConfiguracionUsuario, Curso
 
 class RegistroUsuarioForm(UserCreationForm):
     email = forms.EmailField(required=True)
@@ -26,3 +26,14 @@ class ConfsPerfilForm(forms.ModelForm):
             'recibir_notificaciones': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
             'recibir_ofertas': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
+
+class CursoForm(forms.ModelForm):
+    class Meta:
+        model = Curso
+        fields = ['nombre_curso', 'descripcion']
+        widgets = {
+            'descripcion': forms.Textarea(attrs={'rows': 4}),
+        }
+
+class InscripcionCursoForm(forms.Form):
+    codigo_acceso = forms.CharField(label="Código de Curso", max_length=10, required=True)
