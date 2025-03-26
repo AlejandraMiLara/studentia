@@ -15,6 +15,9 @@ urlpatterns = [
     path('dashboard/', views.dashboard, name='dashboard'),
     path('new/course', views.crear_curso, name='crear_curso'),
     path("course/join", views.inscribirse_curso, name="inscribirse_curso"),
+    path("board/<str:codigo_acceso>", views.board, name="board"),
+    path("board/<str:codigo_acceso>/delete", views.board_borrar, name="board_borrar"),
+    path("board/<str:codigo_acceso>/update", views.board_actualizar, name="board_actualizar"),
     
 ]
 

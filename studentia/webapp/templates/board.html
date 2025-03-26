@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}{{ curso.nombre_curso }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>{{ curso.nombre_curso }}</h2>
+    <p><strong>Profesor:</strong> {{ curso.id_profesor.username }}</p>
+    <p><strong>Descripción:</strong> {{ curso.descripcion }}</p>
+
+    {% if request.user == curso.id_profesor %}
+        <h3>Acciones Rápidas</h3>
+        <a href="#" class="btn btn-success">Crear Actividad</a>
+        <a href="#" class="btn btn-info">Agregar Contenido</a>
+        <a href="#" class="btn btn-warning">EASY ROULETTE</a>
+    {% endif %}
+
+    <h3>Tablero</h3>
+    <p>Nada por el momento.</p>
+
+</div>
+{% endblock %}

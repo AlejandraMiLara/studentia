@@ -157,3 +157,36 @@ def dashboard(request):
         "cursos_creados": cursos_creados,
         "cursos_inscritos": cursos_inscritos
     })
+
+@login_required
+def board(request, codigo_acceso):
+    curso = get_object_or_404(Curso, codigo_acceso=codigo_acceso)
+
+    return render(request, 'board.html',{
+        'curso':curso
+    })
+
+@login_required
+def board_borrar(request, codigo_acceso):
+    curso = get_object_or_404(Curso, codigo_acceso=codigo_acceso)
+    if request.method == "POST":
+        curso.delete()
+        return redirect('dashboard')
+    return render(request, 'board_borrar.html', {'curso':curso})
+
+@login_required
+def board_actualizar(request, codigo_acceso):
+    curso = get_object_or_404(Curso, codigo_acceso=codigo_acceso)
+
+    if request.method == "POST":
+        form = CursoForm(request.POST, instance=curso)
+
+        if form.is_valid():
+            form.save()
+            return redirect('dashboard')
+    else:
+        form = CursoForm(instance=curso)
+    
+    return render(request, 'board_actualizar.html', {
+        'form':form, 'curso':curso
+    })

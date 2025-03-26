@@ -14,10 +14,10 @@
             <ul>
                 {% for curso in cursos_creados %}
                     <li>
-                        <a href="#">{{ curso.nombre_curso }}</a>
+                        <a href="{% url 'board' curso.codigo_acceso %}">{{ curso.nombre_curso }}</a>
                         - Código: <strong>{{ curso.codigo_acceso }}</strong>
-                        <a href="#" class="btn btn-warning btn-sm">Editar Configuración</a>
-                        <a href="#" class="btn btn-danger btn-sm">Eliminar</a>
+                        <a href="{% url 'board_actualizar' curso.codigo_acceso %}" class="btn btn-warning btn-sm">Editar Configuración</a>
+                        <a href="{% url 'board_borrar' curso.codigo_acceso %}" class="btn btn-danger btn-sm">Eliminar</a>
                     </li>
                 {% endfor %}
             </ul>
