@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 import datetime
 from .forms import RegistroUsuarioForm, EditarPerfilForm, ConfsPerfilForm, CursoForm, InscripcionCursoForm, ActividadForm
-from .models import ConfiguracionUsuario, Curso, AlumnoCurso, Actividad
+from .models import ConfiguracionUsuario, Curso, AlumnoCurso, Actividad, UsuarioPersonalizado
 from django.contrib.auth import authenticate, login, logout, get_backends
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -51,6 +51,22 @@ def registrar_usuario(request):
 @login_required
 def ver_perfil(request):
     return render(request, 'perfil.html', {'usuario':request.user})
+
+@login_required
+def report(request, id):
+    pass
+
+@login_required
+def other_profile(request, id):
+    usuario = request.user
+    alumno = get_object_or_404(UsuarioPersonalizado, id=id)
+
+    if usuario.id == alumno.id:
+       return redirect('ver_perfil')
+
+    return render(request, 'other_profile.html', {
+        'alumno':alumno
+    })
 
 @login_required
 def editar_perfil(request):
