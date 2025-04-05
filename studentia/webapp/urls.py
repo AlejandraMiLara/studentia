@@ -16,9 +16,12 @@ urlpatterns = [
     path('new/course', views.crear_curso, name='crear_curso'),
     path("course/join", views.inscribirse_curso, name="inscribirse_curso"),
     path("board/<str:codigo_acceso>", views.board, name="board"),
+    path("board/<str:codigo_acceso>/leave", views.board_leave, name="board_leave"),
     path("board/<str:codigo_acceso>/delete", views.board_borrar, name="board_borrar"),
     path("board/<str:codigo_acceso>/update", views.board_actualizar, name="board_actualizar"),
-    
+    path("board/<str:codigo_acceso>/add/activity", views.board_add_activity, name="board_add_activity"),
+    path("board/<str:codigo_acceso>/add/content", views.board_add_content, name="board_add_content"),
+    path("board/<str:codigo_acceso>/view/students", views.board_view_students, name="board_view_students"),
 ]
 
 if settings.DEBUG:

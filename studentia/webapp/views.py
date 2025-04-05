@@ -113,25 +113,21 @@ def inscribirse_curso(request):
         if form.is_valid():
             codigo_acceso = form.cleaned_data["codigo_acceso"]
 
-            # Buscar el curso con el código ingresado
             curso = Curso.objects.filter(codigo_acceso=codigo_acceso).first()
 
             if not curso:
                 messages.error(request, "El curso no existe.")
                 return redirect("inscribirse_curso")
 
-            # Verificar si el usuario es el profesor del curso
             if curso.id_profesor == request.user:
                 messages.error(request, "No puedes inscribirte en tu propio curso.")
                 return redirect("inscribirse_curso")
 
-            # Verificar si el usuario ya está inscrito
             if AlumnoCurso.objects.filter(curso=curso, alumno=request.user).exists():
                 messages.error(request, "Ya estás inscrito en este curso.")
             else:
-                # Inscribir al usuario en el curso
                 AlumnoCurso.objects.create(curso=curso, alumno=request.user)
-                messages.success(request, f"Te has inscrito en {curso.nombre_curso} correctamente.")
+                #messages.success(request, f"Te has inscrito en {curso.nombre_curso} correctamente.")
 
             return redirect("dashboard")
 
@@ -166,6 +162,20 @@ def board(request, codigo_acceso):
         'curso':curso
     })
 
+def board_leave(request, codigo_acceso):
+    usuario = request.user
+    curso = get_object_or_404(Curso, codigo_acceso=codigo_acceso)
+
+    inscripcion = get_object_or_404(AlumnoCurso, alumno=usuario, curso=curso)
+
+    if request.method == "POST":
+        inscripcion.delete()
+        return redirect('dashboard')
+    
+    return render(request, 'board_leave.html', {
+        "curso":curso
+    })
+
 @login_required
 def board_borrar(request, codigo_acceso):
     curso = get_object_or_404(Curso, codigo_acceso=codigo_acceso)
@@ -190,3 +200,19 @@ def board_actualizar(request, codigo_acceso):
     return render(request, 'board_actualizar.html', {
         'form':form, 'curso':curso
     })
+
+@login_required
+def board_add_activity(request, codigo_acceso):
+    pass
+
+@login_required
+def board_add_content(request, codigo_acceso):
+    curso = get_object_or_404(Curso, codigo_acceso=codigo_acceso)
+
+    return render(request, 'board_add_content.html', {
+        'curso':curso
+    })
+
+@login_required
+def board_view_students(request, codigo_acceso):
+    pass

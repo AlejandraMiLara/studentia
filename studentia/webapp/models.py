@@ -90,6 +90,7 @@ class Actividad(models.Model):
     curso = models.ForeignKey(Curso, on_delete=models.CASCADE)
     fecha = models.DateTimeField(auto_now_add=True)
     archivo = models.FileField(upload_to='actividades/', null=True, blank=True)
+    entregable = models.BooleanField(default=True)
     generado_por_ia = models.BooleanField(default=False)
     titulo = models.CharField(max_length=255)
     contenido = models.TextField()
