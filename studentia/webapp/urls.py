@@ -19,9 +19,10 @@ urlpatterns = [
     path("board/<str:codigo_acceso>/leave", views.board_leave, name="board_leave"),
     path("board/<str:codigo_acceso>/delete", views.board_borrar, name="board_borrar"),
     path("board/<str:codigo_acceso>/update", views.board_actualizar, name="board_actualizar"),
-    path("board/<str:codigo_acceso>/add/activity", views.board_add_activity, name="board_add_activity"),
     path("board/<str:codigo_acceso>/add/content", views.board_add_content, name="board_add_content"),
     path("board/<str:codigo_acceso>/view/students", views.board_view_students, name="board_view_students"),
+    path("board/<str:codigo_acceso>/remove/<int:id_alumno>", views.board_remove_student, name="board_remove_student"),
+
 ]
 
 if settings.DEBUG:

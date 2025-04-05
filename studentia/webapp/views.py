@@ -202,10 +202,6 @@ def board_actualizar(request, codigo_acceso):
     })
 
 @login_required
-def board_add_activity(request, codigo_acceso):
-    pass
-
-@login_required
 def board_add_content(request, codigo_acceso):
     curso = get_object_or_404(Curso, codigo_acceso=codigo_acceso)
 
@@ -222,3 +218,15 @@ def board_view_students(request, codigo_acceso):
         'curso':curso,
         'alumnos_inscritos':alumnos_inscritos
     })
+
+@login_required
+def board_remove_student(request, codigo_acceso, id_alumno):
+    curso = get_object_or_404(Curso, codigo_acceso=codigo_acceso)
+
+    if request.user != curso.id_profesor:
+        return redirect('dashboard')
+
+    if request.method == "POST":
+        AlumnoCurso.objects.filter(curso=curso, alumno_id=id_alumno).delete()
+
+    return redirect('board_view_students', codigo_acceso=codigo_acceso)
