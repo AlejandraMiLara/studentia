@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load humanize %}
 
 {% block title %}{{ curso.nombre_curso }}{% endblock %}
 
@@ -17,7 +18,40 @@
     {% endif %}
 
     <h3>Tablero</h3>
-    <p>Nada por el momento.</p>
+
+    {% if actividades %}
+        <ul>
+            {% for act in actividades %}
+                <li>
+                    <strong>{{ act.titulo }}</strong> 
+                    {% if act.archivo %}
+                        - <a href="{{ act.archivo.url }}" target="_blank">Ver archivo</a>
+                    {% endif %}
+                    {% if act.entregable %}
+                        <span class="badge bg-success">Entregable</span>
+                    {% else %}
+                        <span class="badge bg-success">Contenido</span>
+                    {% endif %}
+                    {% if act.generado_por_ia %}
+                        <span class="badge bg-warning text-dark">IA</span>
+                    {% endif %}
+
+                    <br>
+                    <small class="text-muted">
+                        Publicado {{ act.fecha|naturaltime }} {{ act.fecha|date:'d M Y, H:i' }}.
+                    </small>
+
+                    {% if request.user == curso.id_profesor %}
+                        <a href="{% url 'content_edit' curso.codigo_acceso act.id %}" class="btn btn-sm btn-warning">Editar</a>
+                        <a href="{% url 'content_delete' curso.codigo_acceso act.id %}" class="btn btn-sm btn-danger">Eliminar</a>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No hay actividades aún.</p>
+    {% endif %}
+    
 
 </div>
 {% endblock %}

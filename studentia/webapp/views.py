@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 import datetime
-from .forms import RegistroUsuarioForm, EditarPerfilForm, ConfsPerfilForm, CursoForm, InscripcionCursoForm
-from .models import ConfiguracionUsuario, Curso, AlumnoCurso
+from .forms import RegistroUsuarioForm, EditarPerfilForm, ConfsPerfilForm, CursoForm, InscripcionCursoForm, ActividadForm
+from .models import ConfiguracionUsuario, Curso, AlumnoCurso, Actividad
 from django.contrib.auth import authenticate, login, logout, get_backends
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -157,9 +157,11 @@ def dashboard(request):
 @login_required
 def board(request, codigo_acceso):
     curso = get_object_or_404(Curso, codigo_acceso=codigo_acceso)
+    actividades = Actividad.objects.filter(curso=curso).order_by('-fecha')
 
     return render(request, 'board.html',{
-        'curso':curso
+        'curso':curso,
+        'actividades': actividades
     })
 
 def board_leave(request, codigo_acceso):
@@ -205,9 +207,63 @@ def board_actualizar(request, codigo_acceso):
 def board_add_content(request, codigo_acceso):
     curso = get_object_or_404(Curso, codigo_acceso=codigo_acceso)
 
+    if request.user != curso.id_profesor:
+        return redirect('dashboard')
+
+    if request.method == 'POST':
+        form = ActividadForm(request.POST, request.FILES)
+        if form.is_valid():
+            actividad = form.save(commit=False)
+            actividad.curso = curso
+            actividad.docente = request.user
+            actividad.save()
+            return redirect('board', codigo_acceso=curso.codigo_acceso)
+    else:
+        form = ActividadForm()
+
     return render(request, 'board_add_content.html', {
-        'curso':curso
+        'curso': curso,
+        'form': form
     })
+
+@login_required
+def content_edit(request, codigo_acceso, id_actividad):
+    curso = get_object_or_404(Curso, codigo_acceso=codigo_acceso)
+    actividad = get_object_or_404(Actividad, id=id_actividad, curso=curso)
+
+    if request.user != curso.id_profesor:
+        return redirect('dashboard')
+
+    if request.method == 'POST':
+        form = ActividadForm(request.POST, request.FILES, instance=actividad)
+        if form.is_valid():
+            form.save()
+            return redirect('board', codigo_acceso=codigo_acceso)
+    else:
+        form = ActividadForm(instance=actividad)
+
+    return render(request, 'board_edit_content.html', {
+        'curso': curso,
+        'form': form
+    })
+
+@login_required
+def content_delete(request, codigo_acceso, id_actividad):
+    curso = get_object_or_404(Curso, codigo_acceso=codigo_acceso)
+    actividad = get_object_or_404(Actividad, id=id_actividad, curso=curso)
+
+    if request.user != curso.id_profesor:
+        return redirect('dashboard')
+
+    if request.method == 'POST':
+        actividad.delete()
+        return redirect('board', codigo_acceso=codigo_acceso)
+
+    return render(request, 'board_delete_content.html', {
+        'curso': curso,
+        'actividad': actividad
+    })
+
 
 @login_required
 def board_view_students(request, codigo_acceso):
