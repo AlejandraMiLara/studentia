@@ -12,7 +12,9 @@
         <h3>Acciones Rápidas</h3>
         <a href="#" class="btn btn-success">Crear Actividad</a>
         <a href="#" class="btn btn-info">Agregar Contenido</a>
-        <a href="#" class="btn btn-info">Ver alumnos inscritos</a>
+        <a href="{% url 'board_view_students' curso.codigo_acceso %}" class="btn btn-info">Ver alumnos inscritos</a>
+    {% else %}
+        <a href="{% url 'board_view_students' curso.codigo_acceso %}" class="btn btn-info">Ver alumnos inscritos</a>
     {% endif %}
 
     <h3>Tablero</h3>

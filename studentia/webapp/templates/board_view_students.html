@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}Alumnos - {{ curso.nombre_curso }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Alumnos Inscritos en {{ curso.nombre_curso }}</h2>
+
+    {% if alumnos_inscritos %}
+        <ul>
+            {% for inscripcion in alumnos_inscritos %}
+                <li>{{ inscripcion.alumno.username }} ({{ inscripcion.alumno.email }})</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No hay alumnos inscritos aún.</p>
+    {% endif %}
+
+    <a href="{% url 'board' curso.codigo_acceso %}" class="btn btn-secondary">Volver al curso</a>
+</div>
+{% endblock %}

@@ -215,4 +215,10 @@ def board_add_content(request, codigo_acceso):
 
 @login_required
 def board_view_students(request, codigo_acceso):
-    pass
+    curso = get_object_or_404(Curso, codigo_acceso=codigo_acceso)
+    alumnos_inscritos = AlumnoCurso.objects.filter(curso=curso).select_related('alumno')
+
+    return render(request, 'board_view_students.html', {
+        'curso':curso,
+        'alumnos_inscritos':alumnos_inscritos
+    })
