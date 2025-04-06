@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 import datetime
-from .forms import RegistroUsuarioForm, EditarPerfilForm, ConfsPerfilForm, CursoForm, InscripcionCursoForm, ActividadForm
+from .forms import RegistroUsuarioForm, EditarPerfilForm, ConfsPerfilForm, CursoForm, InscripcionCursoForm, ActividadForm, ReportarForm
 from .models import ConfiguracionUsuario, Curso, AlumnoCurso, Actividad, UsuarioPersonalizado
 from django.contrib.auth import authenticate, login, logout, get_backends
 from django.contrib.auth.decorators import login_required
@@ -54,7 +54,27 @@ def ver_perfil(request):
 
 @login_required
 def report(request, id):
-    pass
+    usuario = request.user
+    alumno = get_object_or_404(UsuarioPersonalizado, id=id)
+
+    if request.method == "POST":
+        form = ReportarForm(request.POST)
+
+        if form.is_valid():
+            reporte = form.save(commit=False)
+
+            reporte.reportante = usuario
+            reporte.reportado = alumno
+            reporte.save()
+            return redirect('report', id=id)
+    else:
+        form = ReportarForm()
+
+    return render(request, 'report.html', {
+        'form':form,
+        'reportado':alumno,
+        'reportante': usuario
+    })
 
 @login_required
 def other_profile(request, id):
