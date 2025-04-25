@@ -19,6 +19,7 @@ def salir(request):
     return redirect('inicio')
 
 def iniciar_sesion(request):
+    msj = None
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
@@ -27,8 +28,8 @@ def iniciar_sesion(request):
             login(request, user)
             return redirect('inicio')
         else:
-            messages.error(request, 'Usuario o contraseña incorrectos')
-    return render(request, 'iniciar_sesion.html')
+            msj = "Correo o contraseña incorrectas. Intente de nuevo"
+    return render(request, 'iniciar_sesion.html', {'msj':msj})
 
 def registrar_usuario(request):
     if request.method == 'POST':
